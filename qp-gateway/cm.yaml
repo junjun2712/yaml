@@ -1,0 +1,26 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: app-gateway
+  namespace: test
+data:
+  application-dev.yml: |
+    server:
+      port: 8081
+    spring:
+      application:
+        name: qp-gateway
+      cloud:
+        gateway:
+          routes:
+            - id: xujin_route
+              uri: http://www.qq.com/
+              predicates:
+                - Path=/zj
+    
+    logging:
+      level:
+        org.springframework.cloud.gateway: TRACE
+        org.springframework.http.server.reactive: DEBUG
+        org.springframework.web.reactive: DEBUG
+        reactor.ipc.netty: DEBUG

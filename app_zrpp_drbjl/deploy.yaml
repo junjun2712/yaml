@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-drbjl
+  namespace: test
+  labels:
+    app: app-drbjl
+    
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-drbjl
+      
+  template:
+    metadata:
+      labels:
+        app: app-drbjl
+        
+    spec:
+      containers:
+      - name: app-drbjl
+        image: dockerhub.sihai.com:8081/test/app_zrpp_drbjl:20190926093709
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        ports:
+        - containerPort: 9991
+      imagePullSecrets:
+      - name: harbor       
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-drbjl
+  namespace: test
+spec:
+  selector:
+    app: app-drbjl
+  ports:
+  - port: 9991
+    name: app-drbjl
+  type: NodePort

@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: etcd1
+  namespace: etcd
+  labels:
+    name: etcd1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: etcd1
+  template:
+    metadata:
+      labels:
+        app: etcd1
+    spec:
+      containers:
+      - name: etcd1
+        image: quay.io/coreos/etcd:latest
+        imagePullPolicy: IfNotPresent 
+        volumeMounts:
+        - mountPath: /data
+          name: etcd-data
+        env:
+        - name: host_ip
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        command: ["/bin/sh","-c"]
+        args:
+        - etcd
+          --name etcd1
+          --initial-advertise-peer-urls http://${host_ip}:2380
+          --listen-peer-urls http://${host_ip}:2380
+          --listen-client-urls http://${host_ip}:2379,http://127.0.0.1:2379
+          --advertise-client-urls http://${host_ip}:2379
+          --initial-cluster-token etcd-cluster-1
+          --initial-cluster etcd1=http://etcd1:2380,etcd2=http://etcd2:2380,etcd3=http://etcd3:2380
+          --initial-cluster-state new
+          --data-dir=/data
+
+      volumes:
+      - name: etcd-data
+        nfs:
+          server: 172.18.12.252
+          path: /data_backup/nfs/etcd1

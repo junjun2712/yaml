@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: app-bjl-ingress
+  namespace: test
+spec:
+  backend:
+    serviceName: default-http-backend
+    servicePort: 80
+  rules:
+  - host: bjl.sihai.com                           ##虚拟主机名称
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: app-bjl
+          servicePort: 9974

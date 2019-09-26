@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qp-login
+  namespace: test
+  labels:
+    app: qp-login
+    
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qp-login
+      
+  template:
+    metadata:
+      labels:
+        app: qp-login
+        
+    spec:
+      containers:
+      - name: qp-login
+        image: dockerhub.sihai.com:8081/test/qp-login:20190910195142
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        ports:
+        - containerPort: 8888
+      imagePullSecrets:
+      - name: harbor       
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qp-login
+  namespace: test
+spec:
+  selector:
+    app: qp-login
+  ports:
+  - port: 8888
+    name: qp-login
+  type: NodePort

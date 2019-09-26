@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: nginx
+  template:
+    metadata:
+      labels:
+        name: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: dockerhub.sihai.com:8081/test/web-mobile:20190910185650
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+      imagePullSecrets:
+      - name: harbor
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  namespace: test
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  type: NodePort
+  selector:
+    name: nginx
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nginx
+  namespace: test
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+  - host: www.sihai.com
+    http:
+      paths:
+      - path:
+        backend:
+          serviceName: nginx
+          servicePort: 80

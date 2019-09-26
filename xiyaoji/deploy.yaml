@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: xiaoyaoji
+  namespace: test
+  labels:
+    app: xiaoyaoji
+    
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: xiaoyaoji
+      
+  template:
+    metadata:
+      labels:
+        app: xiaoyaoji
+        
+    spec:
+      containers:
+      - name: xiaoyaoji
+        image: dockerhub.sihai.com:8081/test/xiaoyaoji:2.0 
+        volumeMounts:
+          - mountPath: /usr/local/tomcat/webapps/ROOT/WEB-INF/classes/config.properties
+            name: xyj
+            subPath: config.properties
+
+        ports:
+        - containerPort: 8080
+      volumes:
+        - name: xyj
+          configMap:
+            name: xyj
+            items:
+            - key: config.properties
+              path: config.properties
+      imagePullSecrets:
+      - name: harbor       
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: xiaoyaoji
+  namespace: test
+spec:
+  selector:
+    app: xiaoyaoji
+  ports:
+  - port: 8080
+    name: xiaoyaoji
+  type: ClusterIP

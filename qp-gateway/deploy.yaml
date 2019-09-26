@@ -1,0 +1,44 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: app-gateway
+  namespace: test
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: app-gateway
+    spec:
+      containers:
+        - name: app-gateway
+          image: dockerhub.sihai.com:8081/test/qp-gateway:20190926093635
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /tmp/config/application-dev.yml
+              name: app-gateway
+              subPath: application-dev.yml
+          ports:
+            - containerPort: 8081
+      volumes:
+        - name: app-gateway
+          configMap:
+            name: app-gateway
+            items:
+            - key: application-dev.yml 
+              path: application-dev.yml 
+      imagePullSecrets:
+      - name: harbor
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-gateway
+  namespace: test
+spec:
+  selector:
+    app: app-gateway
+  ports:
+  - port: 8081
+    name: app-gateway
+  type: NodePort

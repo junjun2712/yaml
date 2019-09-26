@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-ebg
+  namespace: test
+  labels:
+    app: app-ebg
+    
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-ebg
+      
+  template:
+    metadata:
+      labels:
+        app: app-ebg
+        
+    spec:
+      containers:
+      - name: app-ebg
+        image: dockerhub.sihai.com:8081/test/app_zrpp_ebg:20190925164640
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        ports:
+        - containerPort: 9979
+      imagePullSecrets:
+      - name: harbor       
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-ebg
+  namespace: test
+spec:
+  selector:
+    app: app-ebg
+  ports:
+  - port: 9979
+    name: app-ebg
+  type: NodePort

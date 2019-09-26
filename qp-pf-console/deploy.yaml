@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qp-pf-console
+  namespace: test
+  labels:
+    app: qp-pf-console
+    
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qp-pf-console
+      
+  template:
+    metadata:
+      labels:
+        app: qp-pf-console
+        
+    spec:
+      containers:
+      - name: qp-pf-console
+        image: dockerhub.sihai.com:8081/test/qp-pf-console:20190926093714
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        ports:
+        - containerPort: 9000
+      imagePullSecrets:
+      - name: harbor       
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qp-pf-console
+  namespace: test
+spec:
+  selector:
+    app: qp-pf-console
+  ports:
+  - port: 9000
+    name: qp-pf-console
+  type: NodePort

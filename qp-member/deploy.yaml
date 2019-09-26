@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qp-member
+  namespace: test
+  labels:
+    app: qp-member
+    
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qp-member
+      
+  template:
+    metadata:
+      labels:
+        app: qp-member
+        
+    spec:
+      containers:
+      - name: qp-member
+        image: dockerhub.sihai.com:8081/test/qp-member:20190926093653
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        ports:
+        - containerPort: 8093
+      imagePullSecrets:
+      - name: harbor       
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qp-member
+  namespace: test
+spec:
+  selector:
+    app: qp-member
+  ports:
+  - port: 8093
+    name: qp-member
+  type: NodePort

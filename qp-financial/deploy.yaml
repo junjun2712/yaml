@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qp-financial
+  namespace: test
+  labels:
+    app: qp-financial
+    
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qp-financial
+      
+  template:
+    metadata:
+      labels:
+        app: qp-financial
+        
+    spec:
+      containers:
+      - name: qp-financial
+        image: dockerhub.sihai.com:8081/test/qp-financial:20190926093707
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        ports:
+        - containerPort: 8888
+      imagePullSecrets:
+      - name: harbor       
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qp-financial
+  namespace: test
+spec:
+  selector:
+    app: qp-financial
+  ports:
+  - port: 8888
+    name: qp-financial
+  type: NodePort

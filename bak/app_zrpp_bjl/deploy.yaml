@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-bjl
+  namespace: test
+  labels:
+    app: app-bjl
+    
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-bjl
+      
+  template:
+    metadata:
+      labels:
+        app: app-bjl
+        
+    spec:
+      containers:
+      - name: app-bjl
+        image: dockerhub.sihai.com:8081/test/app_zrpp_bjl:20190910195544
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        ports:
+        - containerPort: 9974
+      imagePullSecrets:
+      - name: harbor       
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-bjl
+  namespace: test
+spec:
+  selector:
+    app: app-bjl
+  ports:
+  - port: 9974
+    name: app-bjl
+  type: NodePort

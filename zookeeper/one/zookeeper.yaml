@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zookeeper
+  namespace: test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zookeeper
+  minReadySeconds: 1
+  progressDeadlineSeconds: 60
+  revisionHistoryLimit: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      name: zookeeper
+      labels:
+        app: zookeeper
+    spec:
+      containers:
+      - name: zookeeper
+        image: zookeeper:3.4.10
+        ports:
+        - containerPort: 2181
+        ports:
+        - containerPort: 2888
+        resources:
+          limits:
+            cpu: 10m                    
+            memory: 500Mi               
+          requests:
+            cpu: 10m                    
+            memory: 400Mi               
+        volumeMounts:                   
+        - name: tz-config
+          mountPath: /etc/localtime
+      volumes:
+      - name: tz-config
+        hostPath:
+          path: /usr/share/zoneinfo/Asia/Shanghai

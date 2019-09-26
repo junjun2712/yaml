@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-wxdk
+  namespace: test
+  labels:
+    app: app-wxdk
+    
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-wxdk
+      
+  template:
+    metadata:
+      labels:
+        app: app-wxdk
+        
+    spec:
+      containers:
+      - name: app-wxdk
+        image: dockerhub.sihai.com:8081/test/wxdk:12.0
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+      - name: harbor       
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-wxdk
+  namespace: test
+spec:
+  selector:
+    app: app-wxdk
+  ports:
+  - port: 80
+    name: app-wxdk
+  type: NodePort

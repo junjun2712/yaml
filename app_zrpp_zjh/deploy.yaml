@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-zjh
+  namespace: test
+  labels:
+    app: app-zjh
+    
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-zjh
+      
+  template:
+    metadata:
+      labels:
+        app: app-zjh
+        
+    spec:
+      containers:
+      - name: app-zjh
+        image: dockerhub.sihai.com:8081/test/app_zrpp_zjh:20190925164644
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        ports:
+        - containerPort: 9967
+      imagePullSecrets:
+      - name: harbor       
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-zjh
+  namespace: test
+spec:
+  selector:
+    app: app-zjh
+  ports:
+  - port: 9967
+    name: app-zjh
+  type: NodePort

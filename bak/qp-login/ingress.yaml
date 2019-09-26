@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: qp-login-ingress
+  namespace: test
+spec:
+  backend:
+    serviceName: default-http-backend
+    servicePort: 80
+  rules:
+  - host: login.sihai.com                           ##虚拟主机名称
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: qp-login
+          servicePort: 8888

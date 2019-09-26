@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-kpqznn
+  namespace: test
+  labels:
+    app: app-kpqznn
+    
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-kpqznn
+      
+  template:
+    metadata:
+      labels:
+        app: app-kpqznn
+        
+    spec:
+      containers:
+      - name: app-kpqznn
+        image: dockerhub.sihai.com:8081/test/app_zrpp_kpqznn:20190926093656
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        ports:
+        - containerPort: 9987
+      imagePullSecrets:
+      - name: harbor       
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-kpqznn
+  namespace: test
+spec:
+  selector:
+    app: app-kpqznn
+  ports:
+  - port: 9987
+    name: app-kpqznn
+  type: NodePort

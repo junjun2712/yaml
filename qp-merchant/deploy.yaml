@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qp-merchant
+  namespace: test
+  labels:
+    app: qp-merchant
+    
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qp-merchant
+      
+  template:
+    metadata:
+      labels:
+        app: qp-merchant
+        
+    spec:
+      containers:
+      - name: qp-merchant
+        image: dockerhub.sihai.com:8081/test/qp-merchant:20190926093647
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        ports:
+        - containerPort: 8094
+      imagePullSecrets:
+      - name: harbor       
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qp-merchant
+  namespace: test
+spec:
+  selector:
+    app: qp-merchant
+  ports:
+  - port: 8094
+    name: qp-merchant
+  type: NodePort

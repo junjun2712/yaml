@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-sdk
+  namespace: test
+  labels:
+    app: app-sdk
+    
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-sdk
+      
+  template:
+    metadata:
+      labels:
+        app: app-sdk
+        
+    spec:
+      containers:
+      - name: app-sdk
+        image: dockerhub.sihai.com:8081/test/app_sdk:20190910195534
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        ports:
+        - containerPort: 8080
+      imagePullSecrets:
+      - name: harbor     
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-sdk
+  namespace: test
+spec:
+  selector:
+    app: app-sdk
+  ports:
+  - port: 8080
+    name: app-sdk
+  type: NodePort

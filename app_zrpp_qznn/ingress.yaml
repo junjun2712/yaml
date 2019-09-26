@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: app-qznn-ingress
+  namespace: test
+spec:
+  backend:
+    serviceName: default-http-backend
+    servicePort: 80
+  rules:
+  - host: qznn.sihai.com                           ##虚拟主机名称
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: app-qznn
+          servicePort: 9966 

@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: game-cluster
+  namespace: test
+  labels:
+    app: game-cluster
+    
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: game-cluster
+      
+  template:
+    metadata:
+      labels:
+        app: game-cluster
+        
+    spec:
+      containers:
+      - name: game-cluster
+        image: dockerhub.sihai.com:8081/test/game-cluster:20190926093717
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        ports:
+        - containerPort: 8000
+        ports:
+        - containerPort: 8001
+
+      imagePullSecrets:
+      - name: harbor       
+
+---
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: game-cluster
+  name: game-cluster
+  namespace: test
+spec:
+  ports:
+  - port: 8000
+    protocol: TCP
+    targetPort: 8000
+    name: client
+  - port: 8001
+    protocol: TCP
+    targetPort: 8001
+    name: leader
+  selector:
+    app: game-cluster
+  type: ClusterIP

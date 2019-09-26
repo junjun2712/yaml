@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qp-wallet
+  namespace: test
+  labels:
+    app: qp-wallet
+    
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qp-wallet
+      
+  template:
+    metadata:
+      labels:
+        app: qp-wallet
+        
+    spec:
+      containers:
+      - name: qp-wallet
+        image: dockerhub.sihai.com:8081/test/qp-wallet:1.0
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        ports:
+        - containerPort: 8090
+      imagePullSecrets:
+      - name: harbor       
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qp-wallet
+  namespace: test
+spec:
+  selector:
+    app: qp-wallet
+  ports:
+  - port: 8090
+    name: qp-wallet
+  type: NodePort

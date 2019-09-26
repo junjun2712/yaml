@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: app-d21-ingress
+  namespace: test
+spec:
+  backend:
+    serviceName: default-http-backend
+    servicePort: 80
+  rules:
+  - host: d21.sihai.com                           ##虚拟主机名称
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: app-d21
+          servicePort: 9982

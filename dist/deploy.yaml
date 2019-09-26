@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: backend
+  template:
+    metadata:
+      labels:
+        name: backend
+    spec:
+      containers:
+        - name: backend
+          image: dockerhub.sihai.com:8081/test/backend:5.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+      imagePullSecrets:
+      - name: harbor
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: test
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  type: NodePort
+  selector:
+    name: backend

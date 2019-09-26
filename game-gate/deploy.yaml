@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: game-gate
+  namespace: test
+  labels:
+    app: game-gate
+    
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: game-gate
+      
+  template:
+    metadata:
+      labels:
+        app: game-gate
+        
+    spec:
+      containers:
+      - name: game-gate
+        image: dockerhub.sihai.com:8081/test/game-gate:20190926093721
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        ports:
+        - containerPort: 8000
+        ports:
+        - containerPort: 8003
+        ports:
+        - containerPort: 8007
+
+      imagePullSecrets:
+      - name: harbor       
+
+---
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: game-gate
+  name: game-gate
+  namespace: test
+spec:
+  ports:
+  - port: 8000
+    protocol: TCP
+    targetPort: 8000
+    name: client
+  - port: 8003
+    protocol: TCP
+    targetPort: 8003
+    name: client2
+  - port: 8007
+    name: client3
+  selector:
+    app: game-gate
+  type: ClusterIP

@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-qhbhb
+  namespace: test
+  labels:
+    app: app-qhbhb
+    
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-qhbhb
+      
+  template:
+    metadata:
+      labels:
+        app: app-qhbhb
+        
+    spec:
+      containers:
+      - name: app-qhbhb
+        image: dockerhub.sihai.com:8081/test/app_zrpp_qhbhb:20190926093712
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        ports:
+        - containerPort: 9992
+      imagePullSecrets:
+      - name: harbor       
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-qhbhb
+  namespace: test
+spec:
+  selector:
+    app: app-qhbhb
+  ports:
+  - port: 9992
+    name: app-qhbhb
+  type: NodePort
